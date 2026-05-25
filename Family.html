@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Family Game Hub - MEGA EDITION</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; background: #1a1a2e; padding: 20px; color: #fff; margin: 0; }
+        .container { max-width: 700px; margin: 20px auto; background: #162447; padding: 30px; border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); min-height: 500px; display: flex; flex-direction: column; justify-content: center; position: relative; }
+        h1 { color: #e43f5a; margin-bottom: 5px; }
+        .subtitle { color: #a2a8d3; margin-bottom: 25px; font-size: 14px; }
+        
+        .menu-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 20px; }
+        .menu-btn { background: #0f3460; border: 2px solid #e43f5a; padding: 15px; border-radius: 12px; color: white; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.2s; text-align: left; }
+        .menu-btn:hover { background: #e43f5a; transform: translateY(-3px); }
+        .menu-btn span { display: block; font-size: 12px; color: #a2a8d3; font-weight: normal; margin-top: 4px; }
+
+        .game-screen { display: none; }
+        .back-btn { background: #0f3460; color: #a2a8d3; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-size: 14px; margin-bottom: 20px; align-self: flex-start; }
+        .back-btn:hover { color: white; background: #1f4068; }
+
+        .category-badge { display: inline-block; padding: 6px 12px; background: #e43f5a; border-radius: 20px; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; }
+        .card { background: #1f4068; color: #fff; padding: 35px 20px; border-radius: 15px; font-size: 24px; font-weight: bold; margin-bottom: 20px; min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid #0f3460; }
+        .timer { font-size: 32px; font-weight: bold; color: #e43f5a; margin: 15px 0; font-family: monospace; }
+        
+        .big-display { background: #ff9f43; color: #1a1a2e; padding: 35px; border-radius: 15px; font-size: 32px; font-weight: bold; margin: 20px 0; min-height: 60px; display: flex; align-items: center; justify-content: center; text-transform: uppercase; }
+        .ans-btn { background: #0f3460; color: #fff; border: 1px solid #a2a8d3; padding: 10px; border-radius: 5px; margin-top: 10px; cursor: pointer; font-size: 14px; }
+
+        .click-box { background: #10ac84; padding: 50px; border-radius: 15px; font-size: 40px; font-weight: bold; cursor: pointer; user-select: none; margin: 20px 0; }
+        .click-box:active { background: #0ca17a; transform: scale(0.98); }
+
+        .grid-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0; }
+        .grid-cell { background: #1f4068; aspect-ratio: 1; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; cursor: pointer; border: 2px solid #0f3460; user-select: none; }
+        .grid-cell.active { background: #e43f5a; border-color: #ff2e63; }
+
+        .action-btn { background: #e43f5a; color: white; border: none; padding: 14px 28px; font-size: 18px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; margin: 5px; }
+        .action-btn:hover { background: #b33046; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div id="menu-screen">
+        <h1>🎲 Family Game Hub</h1>
+        <div class="subtitle">6 Complete Games - Built for Maximum Conversation & Interaction</div>
+        <div class="menu-grid">
+            <button class="menu-btn" onclick="showScreen('cards-game')">🃏 Game 1: Cards <span>Voting, group debates, challenges, and confessions.</span></button>
+            <button class="menu-btn" onclick="showScreen('sound-game')">🔊 Game 2: Sound Bites <span>Guess secret words using ONLY sound effects or hums.</span></button>
+            <button class="menu-btn" onclick="showScreen('trivia-game')">🧠 Game 3: Trivia Duel <span>Full trivia bank! Great for team play or head-to-head.</span></button>
+            <button class="menu-btn" onclick="showScreen('chain-game')">⛓️ Game 4: Word Chain <span>Conversational panic. Keep the category chain alive!</span></button>
+            <button class="menu-btn" onclick="showScreen('click-game')">⚡ Game 5: Click Storm <span>A frantic 10-second button-mashing speed challenge.</span></button>
+            <button class="menu-btn" onclick="showScreen('grid-game')">🛑 Game 6: Gridlock <span>Reaction test. Hit the blinking red tile before it moves!</span></button>
+        </div>
+    </div>
+
+    <div id="cards-game" class="game-screen">
+        <button class="back-btn" onclick="goToMenu()">⬅️ Home Menu</button>
+        <h2>Ultimate Family Showdown</h2>
+        <div style="margin-bottom: 20px;"><button class="action-btn" onclick="drawCard()">🃏 Draw Next Card</button></div>
+        <div class="category-badge" id="card-category">Ready?</div>
+        <div class="card" id="card-display">Click the button above to start!</div>
+        <div class="timer" id="cards-timer-display">30s</div>
+        <button onclick="toggleCardsTimer()" style="background: #0f3460; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">Start/Pause Timer</button>
+    </div>
+
+    <div id="sound-game" class="game-screen">
+        <button class="back-btn" onclick="goToMenu()">⬅️ Home Menu</button>
+        <h2>Sound Bites</h2>
+        <p class="subtitle">One person views the screen. Get the family to guess as many words as possible in 45 seconds using ONLY sound effects, noises, or humming!</p>
+        <div class="big-display" id="sound-display">👉 Press Start</div>
+        <button class="action-btn" id="sound-next-btn" onclick="nextSoundWord()" style="display:none; margin-bottom: 15px;">Got It! Next Word 🎉</button>
+        <div><button class="action-btn" id="sound-start-btn" onclick="startSoundGame()" style="background:#10ac84;">Start 45s Round</button></div>
+        <div class="timer" id="sound-timer-display">45s</div>
+    </div>
+
+    <div id="trivia-game" class="game-screen">
+        <button class="back-btn" onclick="goToMenu()">⬅️ Home Menu</button>
+        <h2>Trivia Duel</h2>
+        <p class="subtitle">Split into teams or play free-for-all. Draw a question, discuss, and reveal the answer!</p>
+        <div style="margin-bottom: 20px;"><button class="action-btn" onclick="drawTrivia()">🧠 Draw Trivia Question</button></div>
+        <div class="category-badge" id="trivia-category" style="background:#5f27cd;">Trivia</div>
+        <div class="card" id="trivia-display">Click the button above to start your trivia duel!</div>
+        <button class="ans-btn" id="reveal-btn" onclick="revealTriviaAnswer()" style="display:none; margin: 0 auto 15px auto;">👁️ Reveal Secret Answer</button>
+        <div id="trivia-answer" style="font-size: 22px; font-weight: bold; color: #10ac84; margin-bottom: 20px;"></div>
+    </div>
+
+    <div id="chain-game" class="game-screen">
+        <button class="back-btn" onclick="goToMenu()">⬅️ Home Menu</button>
+        <h2>Word Chain</h2>
+        <p class="subtitle">Go around in a circle. The app gives a category. Each person has 5 seconds to name something in that category that starts with the LAST LETTER of the previous person's word!</p>
+        <div style="margin-bottom: 20px;"><button class="action-btn" onclick="drawChainCategory()" style="background:#ff9f43; color:#1a1a2e;">🏁 Generate New Category</button></div>
+        <div class="card" id="chain-display" style="background:#5f27cd; border-color:#341f97;">Click the button to get a category!</div>
+        <div class="timer" id="chain-timer-display">5s</div>
+        <div id="chain-controls-container">
+            <button class="action-btn" id="chain-start-btn" onclick="startChainGame()" style="background:#10ac84; display:none;">Start Game Clock</button>
+        </div>
+    </div>
+
+    <div id="click-game" class="game-screen">
+        <button class="back-btn" onclick="goToMenu()">⬅️ Home Menu</button>
+        <h2>Click Storm</h2>
+        <p class="subtitle">Click the green box as fast as you can before the 10-second timer runs out!</p>
+        <div class="timer" id="click-timer-display">10s</div>
+        <div class="click-box" id="click-area" onclick="registerClick()">TAP TO START!</div>
+        <div id="click-result" style="font-size: 20px; font-weight: bold; color: #ff9f43;"></div>
+    </div>
+
+    <div id="grid-game" class="game-screen">
+        <button class="back-btn" onclick="goToMenu()">⬅️ Home Menu</button>
+        <h2>Gridlock</h2>
+        <p class="subtitle">How fast are your reflexes? You have 20 seconds to tap as many red glowing squares as you can!</p>
+        <div class="timer" id="grid-timer-display">20s</div>
+        <div id="grid-score" style="font-size: 20px; font-weight: bold; margin-bottom: 10px;">Score: 0</div>
+        <div class="grid-container" id="grid-board"></div>
+        <button class="action-btn" id="grid-start-btn" onclick="startGridGame()" style="background:#10ac84;">Start Game</button>
+    </div>
+
+</div>
+
+<script>
+    function showScreen(screenId) {
+        document.getElementById('menu-screen').style.display = 'none';
+        document.querySelectorAll('.game-screen').forEach(s => s.style.display = 'none');
+        document.getElementById(screenId).style.display = 'block';
+        if(screenId === 'click-game') resetClickStorm();
+        if(screenId === 'sound-game') resetSoundGame();
+        if(screenId === 'grid-game') setupGrid();
+        if(screenId === 'chain-game') resetChainGame();
+        if(screenId === 'trivia-game') resetTriviaGame();
+    }
+
+    function goToMenu() {
+        clearInterval(cardsTimerInterval); clearInterval(soundTimerInterval);
+        clearInterval(clickTimerInterval); clearInterval(gridTimerInterval); clearInterval(chainTimerInterval);
+        document.querySelectorAll('.game-screen').forEach(s => s.style.display = 'none');
+        document.getElementById('menu-screen').style.display = 'block';
+    }
+// --- GAME 1: CARDS DATA & LOGIC ---
+    const deck = [
+        { cat: "Most Likely To", text: "...survive on a deserted island the longest?" },
+        { cat: "Most Likely To", text: "...accidentally sleep through a major family event?" },
+        { cat: "Most Likely To", text: "...spend all their money on something completely useless?" },
+        { cat: "Most Likely To", text: "...become a famous villain in a superhero movie?" },
+        { cat: "Most Likely To", text: "...get lost in their own hometown?" },
+        { cat: "Most Likely To", text: "...start laughing at a completely inappropriate moment?" },
+        { cat: "Most Likely To", text: "...secretly eat the last slice of cake and blame it on the dog?" },
+        { cat: "Most Likely To", text: "...win a reality TV show?" },
+        { cat: "Most Likely To", text: "...survive a zombie apocalypse using only items in their kitchen?" },
+        { cat: "Most Likely To", text: "...accidentally send a text complaining about someone TO that exact person?" },
+        { cat: "Most Likely To", text: "...become a multi-millionaire but still clip coupons?" },
+        { cat: "Most Likely To", text: "...forget where they parked their car within 5 minutes?" },
+        { cat: "Hot Take", text: "What is the worst popular food that everyone else seems to love?" },
+        { cat: "Hot Take", text: "If you could instantly banish one song from existence forever, what would it be?" },
+        { cat: "Hot Take", text: "Is a hot dog a sandwich? Debate fiercely for 1 minute." },
+        { cat: "Hot Take", text: "What is the most useless superpower you can think of?" },
+        { cat: "Hot Take", text: "Pineapple on pizza: Is it a culinary masterpiece or a total crime? Convince the room." },
+        { cat: "Hot Take", text: "Cereal first, or milk first? Whoever does it wrong must defend themselves." },
+        { cat: "Showdown", text: "The person who drew this card challenges someone to a 30-second staring contest. Loser does 5 jumping jacks." },
+        { cat: "Showdown", text: "Everyone must immediately try to balance on one foot. First person to drop a foot loses." },
+        { cat: "Showdown", text: "Name as many cartoon characters as you can in 30 seconds. Go!" },
+        { cat: "Showdown", text: "The person to your left has 30 seconds to make you laugh. If you smile, they get a point." },
+        { cat: "Showdown", text: "Rock, Paper, Scissors tournament! Everyone plays the person next to them right now." },
+        { cat: "Showdown", text: "Thumb War! The drawer challenges the oldest person in the room to an immediate duel." },
+        { cat: "Confession", text: "What is the weirdest habit you have when you are completely alone?" },
+        { cat: "Confession", text: "What is the worst fashion choice you have ever made in your life?" },
+        { cat: "Confession", text: "If you could trade lives with any family member for a week, who would it be and why?" },
+        { cat: "Confession", text: "What is a movie you secretly love but are too embarrassed to admit?" },
+        { cat: "Confession", text: "What is the silliest thing you've ever gotten into a real argument over?" }
+    ];
+    let usedCards = [];
+    let cardsTimerInterval, cardsTimeLeft = 30, cardsTimerRunning = false;
+
+    function drawCard() {
+        if (deck.length === 0) { deck.push(...usedCards); usedCards = []; }
+        const randomIndex = Math.floor(Math.random() * deck.length);
+        const card = deck.splice(randomIndex, 1)[0];
+        usedCards.push(card);
+        document.getElementById('card-category').innerText = card.cat;
+        document.getElementById('card-display').innerText = card.text;
+        clearInterval(cardsTimerInterval); cardsTimeLeft = 30;
+        document.getElementById('cards-timer-display').innerText = "30s"; cardsTimerRunning = false;
+        const badge = document.getElementById('card-category');
+        if (card.cat === "Most Likely To") badge.style.background = "#e43f5a";
+        else if (card.cat === "Hot Take") badge.style.background = "#ff9f43";
+        else if (card.cat === "Showdown") badge.style.background = "#10ac84";
+        else if (card.cat === "Confession") badge.style.background = "#5f27cd";
+    }
+
+    function toggleCardsTimer() {
+        if (cardsTimerRunning) { clearInterval(cardsTimerInterval); cardsTimerRunning = false; }
+        else {
+            cardsTimerRunning = true;
+            cardsTimerInterval = setInterval(() => {
+                cardsTimeLeft--; document.getElementById('cards-timer-display').innerText = cardsTimeLeft + "s";
+                if (cardsTimeLeft <= 0) { clearInterval(cardsTimerInterval); document.getElementById('cards-timer-display').innerText = "⏰ TIME'S UP!"; cardsTimerRunning = false; }
+            }, 1000);
+        }
+    }
+
+    // --- GAME 3: TRIVIA DATA & LOGIC ---
+    const triviaBank = [
+        { q: "What is the only mammal capable of true, sustained flight?", a: "The Bat" },
+        { q: "How many bones do sharks have in their bodies?", a: "Zero (They are made of cartilage!)" },
+        { q: "Which planet in our solar system spins the fastest, completing a full rotation in just 10 hours?", a: "Jupiter" },
+        { q: "What is the world's largest ocean?", a: "The Pacific Ocean" },
+        { q: "Which popular food item was used as currency by the ancient Aztecs?", a: "Cocoa Beans (Chocolate)" },
+        { q: "What country is home to the Kangaroo?", a: "Australia" },
+        { q: "What is the hardest natural substance on Earth?", a: "Diamond" },
+        { q: "How many hearts does an octopus have?", a: "Three" },
+        { q: "Which chemical element has the symbol 'Fe' on the periodic table?", a: "Iron" },
+        { q: "What is the smallest country in the world by land area?", a: "Vatican City" },
+        { q: "In what year did the Titanic sink?", a: "1912" },
+        { q: "What is the primary gas that makes up the Earth's atmosphere?", a: "Nitrogen (about 78%)" },
+        { q: "Which iconic structure takes roughly 20 years to paint completely, meaning by the time they finish, it's time to start over?", a: "The Eiffel Tower" },
+        { q: "What color is a polar bear's skin underneath all that white fur?", a: "Black" },
+        { q: "Which fast food chain has the most locations worldwide?", a: "Subway" }
+    ];
+    let usedTrivia = [], currentTriviaAns = "";
+
+    function resetTriviaGame() {
+        document.getElementById('trivia-display').innerText = 'Click "Draw Trivia Question" to start!';
+        document.getElementById('trivia-answer').innerText = '';
+        document.getElementById('reveal-btn').style.display = 'none';
+    }
+
+    function drawTrivia() {
+        if (triviaBank.length === 0) { triviaBank.push(...usedTrivia); usedTrivia = []; }
+        const rand = Math.floor(Math.random() * triviaBank.length);
+        const question = triviaBank.splice(rand, 1)[0];
+        usedTrivia.push(question);
+        document.getElementById('trivia-display').innerText = question.q;
+        currentTriviaAns = question.a;
+        document.getElementById('trivia-answer').innerText = "";
+        document.getElementById('reveal-btn').style.display = "block";
+    }
+
+    function revealTriviaAnswer() {
+        document.getElementById('trivia-answer').innerText = "💡 Answer: " + currentTriviaAns;
+        document.getElementById('reveal-btn').style.display = "none";
+    }
+
+    // --- GAME 4: WORD CHAIN DATA & LOGIC ---
+    const chainCategories = [
+        "Animals", "Brands/Companies", "Countries", "Types of Food", "Boy Names", "Girl Names", 
+        "Items Found in a Kitchen", "Movies", "Superheroes & Villains", "Things on a Car", "Tools", 
+        "School Subjects", "Fruits or Vegetables", "Cities", "Things that are Red"
+    ];
+    let chainTimerInterval, chainTimeLeft = 5, chainTimerRunning = false;
+
+    function resetChainGame() {
+        clearInterval(chainTimerInterval);
+        document.getElementById('chain-timer-display').innerText = "5s";
+        
+        document.getElementById('chain-controls-container').innerHTML = `
+            <button class="action-btn" id="chain-start-btn" onclick="startChainGame()" style="background:#10ac84;">Start Game Clock</button>
+            <button class="action-btn" id="chain-next-btn" onclick="nextPlayerChain()" style="background:#e43f5a; display:none;">Next Player (Reset & Go) ➡️</button>
+            <button class="action-btn" id="chain-elim-btn" onclick="resetAfterElimination()" style="background:#5f27cd; display:none;">Player Eliminated (Restart) 🔄</button>
+        `;
+        chainTimerRunning = false;
+    }
+
+    function drawChainCategory() {
+        const rand = Math.floor(Math.random() * chainCategories.length);
+        document.getElementById('chain-display').innerText = "Category: " + chainCategories[rand];
+        resetChainGame();
+    }
+
+    function startChainGame() {
+        document.getElementById('chain-start-btn').style.display = "none";
+        document.getElementById('chain-next-btn').style.display = "inline-block";
+        document.getElementById('chain-elim-btn').style.display = "inline-block";
+        runChainClock();
+    }
+
+    function runChainClock() {
+        clearInterval(chainTimerInterval);
+        chainTimeLeft = 5;
+        document.getElementById('chain-timer-display').innerText = "5s";
+        chainTimerRunning = true;
+
+        chainTimerInterval = setInterval(() => {
+            chainTimeLeft--;
+            document.getElementById('chain-timer-display').innerText = chainTimeLeft + "s";
+            if (chainTimeLeft <= 0) {
+                clearInterval(chainTimerInterval);
+                document.getElementById('chain-timer-display').innerText = "💥 BUZZ! ELIMINATED!";
+                chainTimerRunning = false;
+            }
+        }, 1000);
+    }
+
+    function nextPlayerChain() {
+        runChainClock();
+    }
+
+    function resetAfterElimination() {
+        // Stop the current ticking clock
+        clearInterval(chainTimerInterval);
+        chainTimeLeft = 5;
+        document.getElementById('chain-timer-display').innerText = "5s";
+        chainTimerRunning = false;
+        
+        // Hide the passing buttons and show the start button again
+        document.getElementById('chain-start-btn').style.display = "inline-block";
+        document.getElementById('chain-next-btn').style.display = "none";
+        document.getElementById('chain-elim-btn').style.display = "none";
+    }
+// --- GAME 2: SOUND BITES DATA & LOGIC ---
+    const soundWords = [
+        "Lion", "Elephant", "Monkey", "Dolphin", "Frog", "Chicken", "Cow", "Horse", "Rooster", "Snake", "Owl", "Bee", "Wolf howling", "Cat fight", "Duck", "Pig", "Cricket", "Woodpecker", "Goat", "Seal", "Hyena Laugh", "Turkey", "Mosquito", "Crow", "Dog Growling", "Parrot",
+        "Helicopter", "Race Car", "Steam Train", "Motorcycle", "Bicycle Bell", "Police Siren", "Airplane Takeoff", "Submarine Sonar", "Skateboard Trick", "Rowboat", "Fire Engine", "Rocket Launch", "Jet Fighter", "Sports Car Braking", "Ship Horn", "Truck Backing Up",
+        "Chainsaw", "Popcorn Maker", "Washing Machine", "Alarm Clock", "Lawn Mower", "Typewriter", "Vacuum Cleaner", "Blender", "Stapler", "Camera Shutter", "Telephone Ring", "Microwave Beep", "Zipper", "Scissors Cutting", "Hammering a Nail", "Electric Drill", "Cash Register",
+        "Sneeze", "Baby Crying", "Snoring", "Chewing Food", "Whispering", "Brushing Teeth", "Gargling Water", "Yawning", "Heavy Breathing", "Heartbeat", "Clapping Hands", "Giggling", "Shuffling Cards", "Whistling", "Stomping Feet", "Blowing a Kiss", "Slurping Soup",
+        "Thunderstorm", "Campfire Crackling", "Heavy Rain", "Ocean Waves", "Wind Howling", "Waterfall", "Earthquake", "Avalanche", "Wind Chimes", "Leaves Rustling",
+        "Ping Pong Match", "Bowling a Strike", "Basketball Dribble", "Tennis Serve", "Chopping Wood", "Popping Bubble Wrap", "Opening a Soda Can", "Pouring Drink", "Tearing Paper", "Knocking on Door", "Breaking Glass", "Dropping Coins", "Walking in Mud", "Car Crash",
+        "Ghost", "Laser Gun", "Lightsaber", "Robot", "Witch Cackle", "Monster Roar", "Time Machine", "Alien Spaceship", "Sword Fight", "Werewolf", "Dragon Breathing Fire"
+    ];
+    
+    let soundTimerInterval, soundTimeLeft = 45, soundScore = 0, soundGameActive = false;
+
+    function resetSoundGame() {
+        clearInterval(soundTimerInterval);
+        soundTimeLeft = 45; soundScore = 0; soundGameActive = false;
+        document.getElementById('sound-display').innerText = "👉 Press Start";
+        document.getElementById('sound-timer-display').innerText = "45s";
+        document.getElementById('sound-start-btn').style.display = "inline-block";
+        document.getElementById('sound-start-btn').innerText = "Start 45s Round";
+        document.getElementById('sound-next-btn').style.display = "none";
+    }
+
+    function startSoundGame() {
+        soundGameActive = true; soundScore = 0; soundTimeLeft = 45;
+        document.getElementById('sound-start-btn').style.display = "none";
+        document.getElementById('sound-next-btn').style.display = "inline-block";
+        nextSoundWord();
+        soundTimerInterval = setInterval(() => {
+            soundTimeLeft--;
+            document.getElementById('sound-timer-display').innerText = soundTimeLeft + "s";
+            if (soundTimeLeft <= 0) {
+                clearInterval(soundTimerInterval); soundGameActive = false;
+                document.getElementById('sound-display').innerText = "🛑 Round Over! Final Score: " + soundScore;
+                document.getElementById('sound-next-btn').style.display = "none";
+                document.getElementById('sound-start-btn').style.display = "inline-block";
+                document.getElementById('sound-start-btn').innerText = "Play Again";
+            }
+        }, 1000);
+    }
+
+    function nextSoundWord() {
+        if (!soundGameActive) return;
+        const rand = Math.floor(Math.random() * soundWords.length);
+        document.getElementById('sound-display').innerText = soundWords[rand];
+        soundScore++;
+    }
+
+    // --- GAME 5: CLICK STORM LOGIC ---
+    let clickCount = 0, clickTimeLeft = 10, clickTimerInterval, clickGameActive = false, clickHasStarted = false;
+
+    function resetClickStorm() {
+        clearInterval(clickTimerInterval);
+        clickCount = 0; clickTimeLeft = 10; clickGameActive = false; clickHasStarted = false;
+        document.getElementById('click-timer-display').innerText = "10s";
+        document.getElementById('click-area').innerText = "TAP TO START!";
+        document.getElementById('click-result').innerText = "";
+    }
+
+    function registerClick() {
+        if (!clickHasStarted && !clickGameActive) {
+            clickHasStarted = true; clickGameActive = true; clickCount = 1;
+            document.getElementById('click-area').innerText = clickCount;
+            clickTimerInterval = setInterval(() => {
+                clickTimeLeft--;
+                document.getElementById('click-timer-display').innerText = clickTimeLeft + "s";
+                if (clickTimeLeft <= 0) {
+                    clearInterval(clickTimerInterval); clickGameActive = false;
+                    document.getElementById('click-area').innerText = "FINISHED!";
+                    document.getElementById('click-result').innerText = "Score: " + clickCount + " Taps! Pass it to the next person to try and beat it!";
+                    setTimeout(() => { if(!clickGameActive) document.getElementById('click-area').innerText = "TAP TO RESET & PLAY AGAIN"; }, 1500);
+                }
+            }, 1000);
+            return;
+        }
+        if (clickGameActive) { clickCount++; document.getElementById('click-area').innerText = clickCount; }
+        else if (clickHasStarted && !clickGameActive) { resetClickStorm(); }
+    }
+
+    // --- GAME 6: GRIDLOCK LOGIC ---
+    let gridScore = 0, gridTimeLeft = 20, gridTimerInterval, gridActiveIdx = -1, gridGameActive = false;
+
+    function setupGrid() {
+        clearInterval(gridTimerInterval);
+        gridScore = 0; gridTimeLeft = 20; gridGameActive = false;
+        document.getElementById('grid-timer-display').innerText = "20s";
+        document.getElementById('grid-score').innerText = "Score: 0";
+        document.getElementById('grid-start-btn').style.display = "inline-block";
+        const board = document.getElementById('grid-board');
+        board.innerHTML = '';
+        for (let i = 0; i < 16; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'grid-cell';
+            cell.dataset.index = i;
+            cell.onclick = () => handleGridClick(i);
+            board.appendChild(cell);
+        }
+    }
+
+    function startGridGame() {
+        setupGrid();
+        gridGameActive = true;
+        document.getElementById('grid-start-btn').style.display = "none";
+        moveTarget();
+        gridTimerInterval = setInterval(() => {
+            gridTimeLeft--;
+            document.getElementById('grid-timer-display').innerText = gridTimeLeft + "s";
+            if (gridTimeLeft <= 0) {
+                clearInterval(gridTimerInterval); gridGameActive = false;
+                const cells = document.querySelectorAll('.grid-cell');
+                cells.forEach(c => c.classList.remove('active'));
+                alert("Game Over! Your final score: " + gridScore);
+                document.getElementById('grid-start-btn').style.display = "inline-block";
+                document.getElementById('grid-start-btn').innerText = "Play Again";
+            }
+        }, 1000);
+    }
+
+    function moveTarget() {
+        if (!gridGameActive) return;
+        const cells = document.querySelectorAll('.grid-cell');
+        cells.forEach(c => c.classList.remove('active'));
+        let newIdx;
+        do { newIdx = Math.floor(Math.random() * 16); } while (newIdx === gridActiveIdx);
+        gridActiveIdx = newIdx;
+        cells[gridActiveIdx].classList.add('active');
+    }
+
+    function handleGridClick(clickedIdx) {
+        if (!gridGameActive) return;
+        if (clickedIdx === gridActiveIdx) {
+            gridScore++;
+            document.getElementById('grid-score').innerText = "Score: " + gridScore;
+            moveTarget();
+        }
+    }
+</script>
+</body>
+</html>
